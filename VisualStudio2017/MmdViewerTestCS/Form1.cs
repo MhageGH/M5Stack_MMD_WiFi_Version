@@ -11,6 +11,7 @@ namespace MmdViewerTestCS
     {
         private ControlVariableCLRWrapper controlVariableCLRWrapper;
         private Point mousePos;
+        private float[] rotation;
 
         public Form1(ControlVariableCLRWrapper controlVariableCLRWrapper)
         {
@@ -25,7 +26,8 @@ namespace MmdViewerTestCS
                     break;
                 }
             }
-            _tcp = new TCPSender();
+            rotation = new float[9] { 1, 0, 0, 0, 0, 1, 0, 1, 0 };
+            _tcp = new TCPSender(rotation);
         }
 
         // フォーム開始イベント
@@ -63,22 +65,50 @@ namespace MmdViewerTestCS
         // 視点の回転、平行移動
         private void timer1_Tick(object sender, EventArgs e)
         {
-            Point mv = new Point(0, 0);
-            if (!mousePos.IsEmpty) mv = new Point(Control.MousePosition.X - mousePos.X, Control.MousePosition.Y - mousePos.Y);  // マウスカーソルの移動量
-            Vector3 v = controlVariableCLRWrapper.lookAtPoint - controlVariableCLRWrapper.eyePoint; // 視線ベクトル
-            if (Control.MouseButtons == MouseButtons.Right)
-            {
-                controlVariableCLRWrapper.eyePoint = controlVariableCLRWrapper.lookAtPoint - RotateViewVector(v, mv);
-                mousePos = Control.MousePosition;
-            }
-            else if (Control.MouseButtons == MouseButtons.Middle)
-            {
-                Vector3 t = TranslateViewVector(v, mv);
-                controlVariableCLRWrapper.lookAtPoint += t;
-                controlVariableCLRWrapper.eyePoint += t;
-                mousePos = Control.MousePosition;
-            }
-            else mousePos = Point.Empty;
+            //Point mv = new Point(0, 0);
+            //if (!mousePos.IsEmpty) mv = new Point(Control.MousePosition.X - mousePos.X, Control.MousePosition.Y - mousePos.Y);  // マウスカーソルの移動量
+            //Vector3 v = controlVariableCLRWrapper.lookAtPoint - controlVariableCLRWrapper.eyePoint; // 視線ベクトル
+            //if (Control.MouseButtons == MouseButtons.Right)
+            //{
+            //    controlVariableCLRWrapper.eyePoint = controlVariableCLRWrapper.lookAtPoint - RotateViewVector(v, mv);
+            //    mousePos = Control.MousePosition;
+            //}
+            //else if (Control.MouseButtons == MouseButtons.Middle)
+            //{
+            //    Vector3 t = TranslateViewVector(v, mv);
+            //    controlVariableCLRWrapper.lookAtPoint += t;
+            //    controlVariableCLRWrapper.eyePoint += t;
+            //    mousePos = Control.MousePosition;
+            //}
+            //else mousePos = Point.Empty;
+
+            var r = new float[3, 3];
+            var view = new float[4, 4];
+            r[0, 0] = rotation[0];
+            r[0, 1] = rotation[1];
+            r[0, 2] = rotation[2];
+            r[1, 0] = rotation[3];
+            r[1, 1] = rotation[4];
+            r[1, 2] = rotation[5];
+            r[2, 0] = rotation[6];
+            r[2, 1] = rotation[7];
+            r[2, 2] = rotation[8];
+
+            view[0, 0] = +r[0, 0];
+            view[0, 1] = +r[1, 0];
+            view[0, 2] = -r[2, 0];
+            view[1, 0] = +r[0, 2];
+            view[1, 1] = +r[1, 2];
+            view[1, 2] = -r[2, 2];
+            view[2, 0] = +r[0, 1];
+            view[2, 1] = +r[1, 1];
+            view[2, 2] = -r[2, 1];
+
+            view[3, 0] = 0;
+            view[3, 1] = -10;
+            view[3, 2] = 30.0f;
+            view[3, 3] = 1;
+            controlVariableCLRWrapper.SetViewMatrix(view);
         }
 
         /// <summary>
@@ -197,20 +227,22 @@ namespace MmdViewerTestCS
             using (var ms = new MemoryStream())
             {
                 _encParams.Param[0] = new EncoderParameter(Encoder.Quality, _jpgQuality);
+                ms.WriteByte(0x4A); // prefix "JPG"
+                ms.WriteByte(0x50);
+                ms.WriteByte(0x47);
                 ms.WriteByte(0);
                 ms.WriteByte(0);
                 bitmap2.Save(ms, _jpgEncoder, _encParams);
                 rgbValues = ms.GetBuffer();
-                UInt16 len = 65535;
-                if (rgbValues.Length < len)
+                if (rgbValues.Length < 65536)
                 {
-                    len = (UInt16)(rgbValues.Length - 2);
-                    rgbValues[0] = (byte)(len & 0xFF);
-                    rgbValues[1] = (byte)((len >> 8) & 0xFF);
+                    UInt16 len = (UInt16)(rgbValues.Length - 5);
+                    rgbValues[3] = (byte)(len & 0xFF);
+                    rgbValues[4] = (byte)((len >> 8) & 0xFF);
+                    _tcp.setData(rgbValues);
                 }
             }
 
-            _tcp.setData(rgbValues);
         }
 
         int _port = 63333;

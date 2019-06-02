@@ -7,4 +7,5 @@ private:
 public:
 	Camera(D3DXVECTOR3 eyePoint, D3DXVECTOR3 lookAtPoint, float aspect);
 	void GetMatrix(D3DXMATRIX* view, D3DXMATRIX* projection);
+	void SetViewMatrix(D3DXMATRIX view);
 };

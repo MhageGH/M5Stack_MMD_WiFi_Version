@@ -15,3 +15,14 @@ void Camera::GetMatrix(D3DXMATRIX* matView, D3DXMATRIX* matProj) {
 	*matView = view;
 	*matProj = projection;
 }
+
+void Camera::SetViewMatrix(D3DXMATRIX view) {
+	for (int i = 0; i < 4; ++i) for (int j = 0; j < 4; ++j) this->view.m[i][j] = view.m[i][j];
+
+	// •â³
+	//static int t = 0;
+	//D3DXMATRIX rot;
+	//D3DXMatrixRotationY(&rot, t*0.0003f);
+	//D3DXMatrixMultiply(&this->view, &rot, &this->view);
+	//++t;
+}

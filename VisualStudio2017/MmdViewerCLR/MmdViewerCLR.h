@@ -39,6 +39,7 @@ namespace MmdViewerCLR {
 		property bool boneMeshEnabled { bool get(); void set(bool); }
 		property bool rigidMeshEnabled { bool get(); void set(bool); }
 		property bool jointMeshEnabled { bool get(); void set(bool); }
+		void SetViewMatrix(cli::array<float, 2>^ view);
 
 	internal:
 		ControlVariable* GetControlVariable();

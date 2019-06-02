@@ -42,11 +42,12 @@ void MyApplication::Run() {
 	mmdPhysics->BoneUpdate(controlVariable->physicsEnabled);
 
 	// ライト
-	D3DLIGHT9 light = {D3DLIGHT_DIRECTIONAL, {1, 1, 1, 0}, {1, 1, 1, 0}, {1, 1, 1, 0}};	// 色
+	D3DLIGHT9 light = { D3DLIGHT_DIRECTIONAL, {1, 1, 1, 0}, {1, 1, 1, 0}, {1, 1, 1, 0} };	// 色
 	light.Direction = D3DXVECTOR3(-1, -0.8f, 0.7f);		// 方向
 
 	// カメラ
 	Camera camera(controlVariable->eyePoint, controlVariable->lookAtPoint, aspect);
+	camera.SetViewMatrix(controlVariable->view);
 
 	// 描画
 	directXFramework->BeginScene(10, 10, 10);// シーン開始
@@ -65,7 +66,7 @@ void MyApplication::Run() {
 float MyApplication::GetAspect(HWND hWnd) {
 	RECT rc;
 	GetClientRect(hWnd, &rc);
-	return (float)rc.right/(float)rc.bottom;	// アスペクト比 = ビュー空間の幅/高さ (MSDNでは高さ/幅になっているが間違い)
+	return (float)rc.right / (float)rc.bottom;	// アスペクト比 = ビュー空間の幅/高さ (MSDNでは高さ/幅になっているが間違い)
 }
 
 // private: PMDファイルを開く

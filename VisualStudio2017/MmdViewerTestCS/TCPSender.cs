@@ -12,9 +12,11 @@ namespace MmdViewerTestCS
         private int _port;
         private byte[] _sendBuffer;
         private CancellationTokenSource _cts;
+        private float[] rotation;
 
-        public TCPSender()
+        public TCPSender(float[] rotation)
         {
+            this.rotation = rotation;
         }
 
         public void start(string addr, int port)
@@ -45,16 +47,40 @@ namespace MmdViewerTestCS
                 {
                     var client = new TcpClient(_addr, _port);
                     var ns = client.GetStream();
-                    ns.ReadTimeout = 10000;
-                    ns.WriteTimeout = 10000;
+                    client.NoDelay = true;
+                    ns.ReadTimeout = 2000;
+                    ns.WriteTimeout = 2000;
+                    var nodatacount = 0;
                     while (!ct.IsCancellationRequested && client.Connected)
                     {
                         try
                         {
-                            if (0 < ns.Read(resBytes, 0, resBytes.Length))
+                            var res = ns.Read(resBytes, 0, resBytes.Length);
+                            if (0 < res)
                             {
-                                var tmp = _sendBuffer;
-                                ns.Write(tmp, 0, tmp.Length);
+                                nodatacount = 0;
+                                if (    resBytes[0] == 0x4A  // "JPG"
+                                     && resBytes[1] == 0x50
+                                     && resBytes[2] == 0x47
+                                     && resBytes[3] == 0x0A)
+                                {
+                                    var s = System.Text.Encoding.UTF8.GetString(resBytes, 0, res);
+                                    s = s.Replace("\n", "");
+                                    var ss = s.Split(new char[] { ' ' });
+                                    if (ss.Length == rotation.Length + 1) for (int i = 0; i < rotation.Length; ++i) rotation[i] = (float)Convert.ToDouble(ss[i + 1]);
+
+                                    var tmp = _sendBuffer;
+                                    ns.Write(tmp, 0, tmp.Length);
+                                }
+                                else
+                                {
+                                    Console.WriteLine("unknown cmd");
+                                }
+                            }
+                            else
+                            {
+                                Thread.Sleep(1);
+                                if (++nodatacount > 1000) break;
                             }
                         }
                         catch (Exception ex)

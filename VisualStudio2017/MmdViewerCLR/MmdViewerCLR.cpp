@@ -83,6 +83,9 @@ bool ControlVariableCLRWrapper::jointMeshEnabled::get() { return controlVariable
 
 void ControlVariableCLRWrapper::jointMeshEnabled::set(bool s) { controlVariable->jointMeshEnabled = s; }
 
+void ControlVariableCLRWrapper::SetViewMatrix(cli::array<float,2>^ view) {
+	for (int i = 0; i < 4; ++i) for (int j = 0; j < 4; ++j) controlVariable->view.m[i][j] = view[i, j];
+}
 
 
 ///// MyApplicationCLR //////

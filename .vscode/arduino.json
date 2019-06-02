@@ -1,0 +1,6 @@
+{
+    "port": "COM10",
+    "board": "espressif:esp32:m5stack-fire",
+    "configuration": "PSRAM=enabled,PartitionScheme=default,UploadSpeed=921600,DebugLevel=none",
+    "sketch": "M5Stack_MMD_WiFi_Version.ino"
+}
