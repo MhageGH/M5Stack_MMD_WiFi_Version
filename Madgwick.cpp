@@ -1,35 +1,27 @@
-#include "quaternionFilters2.h"
+#include "Madgwick.h"
 
 #define Kp 2.0f * 5.0f
 #define Ki 0.0f
 
-static float GyroMeasError = PI * (10.0f / 180.0f);
-static float GyroMeasDrift = PI * (0.01f / 180.0f);
-static float beta = sqrt(3.0f / 4.0f) * GyroMeasError; // Compute beta
-static float zeta = sqrt(3.0f / 4.0f) * GyroMeasDrift;
-static float eInt[3] = {0.0f, 0.0f, 0.0f};
-static float q[4] = {1.0f, 0.0f, 0.0f, 0.0f};
-static float r[9] = {1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f};
-
-float invSqrt(float x)
-{
+float Madgwick::invSqrt(float x) {
   float halfx = 0.5f * x;
   float y = x;
-  long i = *(long *)&y;
+  long i = *(long*)&y;
   i = 0x5f3759df - (i >> 1);
-  y = *(float *)&i;
+  y = *(float*)&i;
   y = y * (1.5f - (halfx * y * y));
   y = y * (1.5f - (halfx * y * y));
   return y;
 }
 
-void MadgwickQuaternionUpdateIMU2(float ax, float ay, float az, float gx, float gy, float gz, float deltat)
-{
+void Madgwick::Update(float ax, float ay, float az, float gx, float gy,
+                      float gz, float deltat) {
   float q0 = q[0], q1 = q[1], q2 = q[2], q3 = q[3];
   float recipNorm;
   float s0, s1, s2, s3;
   float qDot1, qDot2, qDot3, qDot4;
-  float _2q0, _2q1, _2q2, _2q3, _4q0, _4q1, _4q2, _8q1, _8q2, q0q0, q1q1, q2q2, q3q3;
+  float _2q0, _2q1, _2q2, _2q3, _4q0, _4q1, _4q2, _8q1, _8q2, q0q0, q1q1, q2q2,
+      q3q3;
 
   // Rate of change of quaternion from gyroscope
   qDot1 = 0.5f * (-q1 * gx - q2 * gy - q3 * gz);
@@ -37,10 +29,9 @@ void MadgwickQuaternionUpdateIMU2(float ax, float ay, float az, float gx, float 
   qDot3 = 0.5f * (q0 * gy - q1 * gz + q3 * gx);
   qDot4 = 0.5f * (q0 * gz + q1 * gy - q2 * gx);
 
-  // Compute feedback only if accelerometer measurement valid (avoids NaN in accelerometer normalisation)
-  if (!((ax == 0.0f) && (ay == 0.0f) && (az == 0.0f)))
-  {
-
+  // Compute feedback only if accelerometer measurement valid (avoids NaN in
+  // accelerometer normalisation)
+  if (!((ax == 0.0f) && (ay == 0.0f) && (az == 0.0f))) {
     // Normalise accelerometer measurement
     recipNorm = invSqrt(ax * ax + ay * ay + az * az);
     ax *= recipNorm;
@@ -64,10 +55,13 @@ void MadgwickQuaternionUpdateIMU2(float ax, float ay, float az, float gx, float 
 
     // Gradient decent algorithm corrective step
     s0 = _4q0 * q2q2 + _2q2 * ax + _4q0 * q1q1 - _2q1 * ay;
-    s1 = _4q1 * q3q3 - _2q3 * ax + 4.0f * q0q0 * q1 - _2q0 * ay - _4q1 + _8q1 * q1q1 + _8q1 * q2q2 + _4q1 * az;
-    s2 = 4.0f * q0q0 * q2 + _2q0 * ax + _4q2 * q3q3 - _2q3 * ay - _4q2 + _8q2 * q1q1 + _8q2 * q2q2 + _4q2 * az;
+    s1 = _4q1 * q3q3 - _2q3 * ax + 4.0f * q0q0 * q1 - _2q0 * ay - _4q1 +
+         _8q1 * q1q1 + _8q1 * q2q2 + _4q1 * az;
+    s2 = 4.0f * q0q0 * q2 + _2q0 * ax + _4q2 * q3q3 - _2q3 * ay - _4q2 +
+         _8q2 * q1q1 + _8q2 * q2q2 + _4q2 * az;
     s3 = 4.0f * q1q1 * q3 - _2q1 * ax + 4.0f * q2q2 * q3 - _2q2 * ay;
-    recipNorm = invSqrt(s0 * s0 + s1 * s1 + s2 * s2 + s3 * s3); // normalise step magnitude
+    recipNorm = invSqrt(s0 * s0 + s1 * s1 + s2 * s2 +
+                        s3 * s3);  // normalise step magnitude
     s0 *= recipNorm;
     s1 *= recipNorm;
     s2 *= recipNorm;
@@ -117,17 +111,7 @@ void MadgwickQuaternionUpdateIMU2(float ax, float ay, float az, float gx, float 
   r[6] = 2.0 * x * z - 2.0 * w * y;
   r[7] = 2.0 * y * z + 2.0 * w * x;
   r[8] = w * w - x * x - y * y + z * z;
-  for (int i = 0; i < 4; ++i)
-    Serial.printf("q[%d] = %f\r\n", i, q[i]);
+  // for (int i = 0; i < 4; ++i) Serial.printf("q[%d] = %f\r\n", i, q[i]);
 }
 
-const float *getQ2() { return q; }
-
-const float *getR2() { return r; }
-
-void ResetQ()
-{
-  q[0] = 1.0f;
-  for (int i = 1; i < 4; ++i)
-    q[i] = 0.0f;
-}
+const float* Madgwick::getR2() { return r; }
