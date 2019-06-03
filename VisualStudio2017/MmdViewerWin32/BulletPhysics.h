@@ -8,12 +8,10 @@
 #ifdef _DEBUG
 #pragma comment(lib,"../BulletLib/BulletCollision_vs2010_debug.lib")
 #pragma comment(lib,"../BulletLib/BulletDynamics_vs2010_debug.lib")
-#pragma comment(lib,"../BulletLib/BulletSoftBody_vs2010_debug.lib")
 #pragma comment(lib,"../BulletLib/LinearMath_vs2010_debug.lib")
 #else
 #pragma comment(lib,"../BulletLib/BulletCollision_vs2010.lib")
 #pragma comment(lib,"../BulletLib/BulletDynamics_vs2010.lib")
-#pragma comment(lib,"../BulletLib/BulletSoftBody_vs2010.lib")
 #pragma comment(lib,"../BulletLib/LinearMath_vs2010.lib")
 #endif
 

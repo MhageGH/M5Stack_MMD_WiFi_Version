@@ -79,7 +79,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Bezie.cpp" />
-    <ClCompile Include="BulletDemo.cpp" />
     <ClCompile Include="BulletPhysics.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Coord.cpp" />
@@ -97,7 +96,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bezie.h" />
-    <ClInclude Include="BulletDemo.h" />
     <ClInclude Include="BulletPhysics.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="ControlVariable.h" />
