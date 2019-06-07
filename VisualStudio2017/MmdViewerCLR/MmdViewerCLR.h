@@ -1,5 +1,3 @@
-// MmdViewerCLR.h
-
 #pragma once
 
 using namespace System;
@@ -25,6 +23,7 @@ namespace MmdViewerCLR {
 
 	public ref class ControlVariableCLRWrapper {
 		ControlVariable* controlVariable;
+		cli::array<byte>^ bitmapBuffer = nullptr;
 	public:
 		ControlVariableCLRWrapper();
 		~ControlVariableCLRWrapper();
@@ -39,8 +38,9 @@ namespace MmdViewerCLR {
 		property bool boneMeshEnabled { bool get(); void set(bool); }
 		property bool rigidMeshEnabled { bool get(); void set(bool); }
 		property bool jointMeshEnabled { bool get(); void set(bool); }
+		property bool bitmapRevising { bool get(); void set(bool); }
 		void SetViewMatrix(cli::array<float, 2>^ view);
-
+		cli::array<byte>^ GetBitmapBuffer();
 	internal:
 		ControlVariable* GetControlVariable();
 	};
@@ -48,18 +48,9 @@ namespace MmdViewerCLR {
 	public ref class MyApplicationCLR {
 		MyApplication* myApplication;
 	public:
-		MyApplicationCLR(System::IntPtr hWnd, ControlVariableCLRWrapper^ controlVariableCLRWrapper);
+		MyApplicationCLR(System::IntPtr hWnd, ControlVariableCLRWrapper^ controlVariableCLRWrapper, int width, int height);
 		~MyApplicationCLR();
 		!MyApplicationCLR();
 		void Run();
 	};
-
-	//public ref class BulletDemoCLR {
-	//	BulletDemo* bulletDemo;
-	//public:
-	//	BulletDemoCLR(System::IntPtr hWnd);
-	//	~BulletDemoCLR();
-	//	!BulletDemoCLR();
-	//	void Run();
-	//};
 }

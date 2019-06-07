@@ -69,6 +69,7 @@ void DirectXFramework::SetFogConfiguration(){
 }
 
 DirectXFramework::~DirectXFramework(void) {
+	SAFE_RELEASE(pBitmapBuf);
 	SAFE_RELEASE(pDevice);
 	SAFE_RELEASE(pD3d);
 }
@@ -87,3 +88,23 @@ void DirectXFramework::EndScene() {
 	pDevice->Present(NULL, NULL, NULL, NULL);
 }
 
+byte* DirectXFramework::ReviseBitmap() {
+	// バックバファの取得
+	LPDIRECT3DSURFACE9 pBackBuf;
+	pDevice->GetRenderTarget(0, &pBackBuf);
+
+	// スクショ出力
+	D3DXSaveSurfaceToFileInMemory(&pBitmapBuf, D3DXIFF_BMP, pBackBuf, NULL, NULL);	// ヘッダも含めてビットマップファイルそのものがメモリに保存される
+
+	// Get系で取得したサーフェイスはAddRefが呼ばれているので忘れずに解放する
+	pBackBuf->Release();
+
+	return (byte*)pBitmapBuf->GetBufferPointer();	// アドレスは変わるのでポインタ更新が必要
+}
+
+int DirectXFramework::CreateBitmapBuffer(int width, int height) {
+	const int headersize = 54;
+	numBytes = width * height * 4 + headersize;
+	D3DXCreateBuffer(numBytes, &pBitmapBuf);
+	return numBytes;
+}

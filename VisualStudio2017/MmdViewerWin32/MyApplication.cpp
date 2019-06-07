@@ -2,7 +2,7 @@
 #include "MyApplication.h"
 #include "Path.h"
 
-MyApplication::MyApplication(HWND hWnd, ControlVariable* controlVariable) {
+MyApplication::MyApplication(HWND hWnd, ControlVariable* controlVariable, int width, int height) {
 	this->controlVariable = controlVariable;
 	directXFramework = new DirectXFramework(hWnd);
 	pDevice = directXFramework->GetD3DDevice();
@@ -13,6 +13,8 @@ MyApplication::MyApplication(HWND hWnd, ControlVariable* controlVariable) {
 	const D3DXVECTOR3 gravity(0, -9.8f*2.5f, 0);
 	bulletPhysics = new BulletPhysics(gravity);
 	mmdPhysics = new MmdPhysics(pDevice, bulletPhysics);
+	this->controlVariable->bitmapBufferSize = directXFramework->CreateBitmapBuffer(width, height);
+	;
 }
 
 MyApplication::~MyApplication() {
@@ -57,6 +59,12 @@ void MyApplication::Run() {
 	if (mmdSkinMesh && controlVariable->rigidMeshEnabled) mmdPhysics->DrawRigidMesh(&world, &light, &camera);
 	if (mmdSkinMesh && controlVariable->jointMeshEnabled) mmdPhysics->DrawJointMesh(&world, &light, &camera);
 	directXFramework->EndScene();	// シーン終了
+
+	// ビットマップバッファ更新
+	if (controlVariable->bitmapRevising) {
+		this->controlVariable->bitmapBuffer = directXFramework->ReviseBitmap();
+		controlVariable->bitmapRevising = false;
+	}
 }
 
 

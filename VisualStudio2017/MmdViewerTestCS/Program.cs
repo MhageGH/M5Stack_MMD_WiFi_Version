@@ -21,7 +21,7 @@ namespace MmdViewerTestCS
             var controlVariableCLRWrapper = new ControlVariableCLRWrapper();
             Form1 form1 = new Form1(controlVariableCLRWrapper);
             form1.Show();
-            var myApplicationCLR = new MyApplicationCLR(form1.Handle, controlVariableCLRWrapper);
+            var myApplicationCLR = new MyApplicationCLR(form1.Handle, controlVariableCLRWrapper, form1.ClientRectangle.Width, form1.ClientRectangle.Height);
             while (form1.Created)
             {
                 myApplicationCLR.Run();

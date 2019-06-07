@@ -22,7 +22,7 @@ private:
 public:
 	// コンストラクタ
 	// @param hWnd ウィンドウハンドル
-	MyApplication(HWND hWnd, ControlVariable* controlVariable);
+	MyApplication(HWND hWnd, ControlVariable* controlVariable, int width, int height);
 
 	// デストラクタ
 	~MyApplication();

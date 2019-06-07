@@ -4,7 +4,6 @@
 #include "MmdViewerCLR.h"
 #include "../MmdViewerWin32/MyApplication.h"
 #include "../MmdViewerWin32/ControlVariable.h"
-//#include "../MmdViewerWin32/BulletDemo.h"
 
 
 using namespace MmdViewerCLR;
@@ -83,15 +82,24 @@ bool ControlVariableCLRWrapper::jointMeshEnabled::get() { return controlVariable
 
 void ControlVariableCLRWrapper::jointMeshEnabled::set(bool s) { controlVariable->jointMeshEnabled = s; }
 
+bool ControlVariableCLRWrapper::bitmapRevising::get() { return controlVariable->bitmapRevising; }
+
+void ControlVariableCLRWrapper::bitmapRevising::set(bool s) { controlVariable->bitmapRevising = s; }
+
 void ControlVariableCLRWrapper::SetViewMatrix(cli::array<float,2>^ view) {
 	for (int i = 0; i < 4; ++i) for (int j = 0; j < 4; ++j) controlVariable->view.m[i][j] = view[i, j];
 }
 
+cli::array<byte>^ ControlVariableCLRWrapper::GetBitmapBuffer() {
+	if (bitmapBuffer == nullptr) bitmapBuffer = gcnew cli::array<byte>(controlVariable->bitmapBufferSize);
+	if (controlVariable->bitmapBuffer) for (int i = 0; i < bitmapBuffer->Length; ++i) bitmapBuffer[i] = controlVariable->bitmapBuffer[i];
+	return bitmapBuffer;
+}
 
 ///// MyApplicationCLR //////
-MyApplicationCLR::MyApplicationCLR(System::IntPtr hWnd, ControlVariableCLRWrapper^ controlVariableCLRWrapper) {
+MyApplicationCLR::MyApplicationCLR(System::IntPtr hWnd, ControlVariableCLRWrapper^ controlVariableCLRWrapper, int width, int height) {
 	ControlVariable* controlVariable = controlVariableCLRWrapper->GetControlVariable();
-	myApplication = new MyApplication((HWND)(void*)hWnd, controlVariable);
+	myApplication = new MyApplication((HWND)(void*)hWnd, controlVariable, width, height);
 }
 
 MyApplicationCLR::~MyApplicationCLR() {	this->!MyApplicationCLR(); }
@@ -102,18 +110,3 @@ void MyApplicationCLR::Run() {
 	try { myApplication->Run(); }
 	catch (LPCTSTR str) { throw gcnew Exception(gcnew String(str));	}
 }
-
-
-
-//BulletDemoCLR::BulletDemoCLR(System::IntPtr hWnd) {
-//	bulletDemo = new FreeDropDemo((HWND)(void*)hWnd);
-//}
-//
-//BulletDemoCLR::~BulletDemoCLR() { this->!BulletDemoCLR(); }
-//
-//BulletDemoCLR::!BulletDemoCLR() { delete bulletDemo; }
-//
-//void BulletDemoCLR::Run() { 
-//	try { bulletDemo->Run(); }
-//	catch (LPCTSTR str) { throw gcnew Exception(gcnew String(str)); }
-//}

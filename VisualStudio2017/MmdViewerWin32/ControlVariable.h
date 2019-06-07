@@ -11,7 +11,9 @@ struct ControlVariable {
 		rigidMeshEnabled = false;
 		jointMeshEnabled = false;
 		D3DXMatrixIdentity(&view);
+		bitmapRevising = false;
 	}
+
 	bool openPmdFileFlag;		// PMDファイルを開くフラグ
 	bool openVmdFileFlag;		// VMDファイルを開くフラグ
 	std::tstring pmdFileName;	// PMDファイル名
@@ -23,4 +25,7 @@ struct ControlVariable {
 	bool boneMeshEnabled;		// ボーンメッシュ使用可能フラグ
 	bool rigidMeshEnabled;		// 剛体メッシュ使用可能フラグ
 	bool jointMeshEnabled;		// ジョイントメッシュ使用可能フラグ
+	bool bitmapRevising;		// ビットマップ更新中
+	byte* bitmapBuffer = 0;		// ビットマップのバッファ
+	int bitmapBufferSize = 0;	// ビットマップのバッファのサイズ
 };
