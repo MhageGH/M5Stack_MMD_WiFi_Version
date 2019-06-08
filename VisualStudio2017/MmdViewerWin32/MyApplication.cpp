@@ -13,7 +13,7 @@ MyApplication::MyApplication(HWND hWnd, ControlVariable* controlVariable, int wi
 	const D3DXVECTOR3 gravity(0, -9.8f*2.5f, 0);
 	bulletPhysics = new BulletPhysics(gravity);
 	mmdPhysics = new MmdPhysics(pDevice, bulletPhysics);
-	this->controlVariable->bitmapBufferSize = directXFramework->CreateBitmapBuffer(width, height);
+	this->controlVariable->bitmapBufferSize = directXFramework->CalculateBitmapBufferSize(width, height);
 	;
 }
 
@@ -65,6 +65,7 @@ void MyApplication::Run() {
 		this->controlVariable->bitmapBuffer = directXFramework->ReviseBitmap();
 		controlVariable->bitmapRevising = false;
 	}
+
 }
 
 

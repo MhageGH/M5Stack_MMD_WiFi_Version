@@ -7,7 +7,7 @@ private:
 	LPDIRECT3D9	pD3d;
 	LPDIRECT3DDEVICE9 pDevice;					// Direct3Dデバイスオブジェクト
 	LPD3DXBUFFER pBitmapBuf = 0;
-	DWORD numBytes;
+	DWORD bitmapBufferSize;
 
 private: // 初期化補助関数
 	void CreateDirect3DDeviceObject(HWND hWnd);	// DIRECT3Dデバイスオブジェクトの作成
@@ -33,5 +33,5 @@ public:
 
 	byte* ReviseBitmap();
 
-	int CreateBitmapBuffer(int width, int height);
+	int CalculateBitmapBufferSize(int width, int height);
 };

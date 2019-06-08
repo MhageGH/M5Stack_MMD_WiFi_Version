@@ -91,7 +91,9 @@ void ControlVariableCLRWrapper::SetViewMatrix(cli::array<float,2>^ view) {
 }
 
 cli::array<byte>^ ControlVariableCLRWrapper::GetBitmapBuffer() {
-	if (bitmapBuffer == nullptr) bitmapBuffer = gcnew cli::array<byte>(controlVariable->bitmapBufferSize);
+	if (bitmapBuffer == nullptr) {
+		bitmapBuffer = gcnew cli::array<byte>(controlVariable->bitmapBufferSize);
+	}
 	if (controlVariable->bitmapBuffer) for (int i = 0; i < bitmapBuffer->Length; ++i) bitmapBuffer[i] = controlVariable->bitmapBuffer[i];
 	return bitmapBuffer;
 }
