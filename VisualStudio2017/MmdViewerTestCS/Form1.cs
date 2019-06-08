@@ -14,6 +14,7 @@ namespace MmdViewerTestCS
         string vmdInitialDirectory = "";
         string pmdHeader = "PMD:";
         string vmdHeader = "VMD:";
+        string shaderFilename = "Shader.fx";
 
         private ControlVariableCLRWrapper controlVariableCLRWrapper;
         private float[] rotation;
@@ -43,6 +44,17 @@ namespace MmdViewerTestCS
                         if (s.StartsWith(pmdHeader)) pmdInitialDirectory = s.Substring(pmdHeader.Length);
                         else if (s.StartsWith(vmdHeader)) vmdInitialDirectory = s.Substring(vmdHeader.Length);
                     }
+                }
+            }
+            if (!File.Exists(shaderFilename))
+            {
+                if (File.Exists("..\\..\\" + shaderFilename))
+                {
+                    File.Copy("..\\..\\" + shaderFilename, shaderFilename);
+                }
+                else
+                {
+                    MessageBox.Show(shaderFilename + "を実行ファイルと同じフォルダに置いてください。");
                 }
             }
         }
@@ -184,7 +196,7 @@ namespace MmdViewerTestCS
         private void tcpJPGPrepare()
         {
             var bitmapBuf = controlVariableCLRWrapper.GetBitmapBuffer();
-            if (bitmapBuf[0] != 0)
+            if (bitmapBuf.Length != 0 && bitmapBuf[0] != 0)
             {
                 var bitmap = new Bitmap(new MemoryStream(bitmapBuf));
                 var bitmap2 = new Bitmap(160, 120);
