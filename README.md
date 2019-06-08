@@ -1,7 +1,11 @@
 # M5Stack_MMD_WiFi_Version
 ![property](doc/photo01.jpg)<br>
 In this version, M5Stack detects own attitude by IMU sensor and sends PC the attitude data.
-PC executes 3D rendering calculation based on the attitude and sends M5Stack the image, and M5Stack displays it.
+PC executes 3D rendering calculation based on the attitude and sends M5Stack the image, and M5Stack displays it.<br><br>
+This enables such expression that is impossible in case of M5Stack solo.
+- Any models with any motions
+- Enable phisics
+
 ## How to uses
 1. Write M5Stack_MMD_WiFi_Version.ino to M5Stack.
 2. Build and execute MmdViewerSolution.sln by VisualStudio 2017.
