@@ -1,6 +1,7 @@
 # M5Stack_MMD_WiFi_Version
 ![property](doc/photo01.jpg)<br>
-In this version, M5Stack detects own attitude by IMU sensor and sends PC the attitude data.
+In this version, M5Stack displays a MMD model by being assisted by PC through LAN with WiFi connection.<br>
+M5Stack detects own attitude by IMU sensor and sends PC the attitude data.
 PC executes 3D rendering calculation based on the attitude and sends M5Stack the image, and M5Stack displays it.<br><br>
 This enables such expression that is impossible in case of M5Stack solo.
 - Any models with any motions
