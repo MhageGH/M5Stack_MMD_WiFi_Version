@@ -42,6 +42,7 @@
             this.timer2 = new System.Windows.Forms.Timer(this.components);
             this.button2 = new System.Windows.Forms.Button();
             this.textBox1 = new System.Windows.Forms.TextBox();
+            this.openVMDToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -59,7 +60,8 @@
             // fILEFToolStripMenuItem
             // 
             this.fILEFToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.openOToolStripMenuItem});
+            this.openOToolStripMenuItem,
+            this.openVMDToolStripMenuItem});
             this.fILEFToolStripMenuItem.Name = "fILEFToolStripMenuItem";
             this.fILEFToolStripMenuItem.Size = new System.Drawing.Size(54, 20);
             this.fILEFToolStripMenuItem.Text = "FILE(&F)";
@@ -67,8 +69,8 @@
             // openOToolStripMenuItem
             // 
             this.openOToolStripMenuItem.Name = "openOToolStripMenuItem";
-            this.openOToolStripMenuItem.Size = new System.Drawing.Size(120, 22);
-            this.openOToolStripMenuItem.Text = "Open(&O)";
+            this.openOToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.openOToolStripMenuItem.Text = "Open PMD";
             this.openOToolStripMenuItem.Click += new System.EventHandler(this.openOToolStripMenuItem_Click);
             // 
             // optionOToolStripMenuItem
@@ -153,6 +155,13 @@
             this.textBox1.TabIndex = 3;
             this.textBox1.Text = "192.168.11.9";
             // 
+            // openVMDToolStripMenuItem
+            // 
+            this.openVMDToolStripMenuItem.Name = "openVMDToolStripMenuItem";
+            this.openVMDToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.openVMDToolStripMenuItem.Text = "Open VMD";
+            this.openVMDToolStripMenuItem.Click += new System.EventHandler(this.openVMDToolStripMenuItem_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -165,6 +174,7 @@
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
             this.Text = "MMD Viewer";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form1_FormClosed);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
@@ -188,6 +198,7 @@
         private System.Windows.Forms.Timer timer2;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.ToolStripMenuItem openVMDToolStripMenuItem;
     }
 }
 

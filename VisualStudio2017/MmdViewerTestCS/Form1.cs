@@ -9,8 +9,12 @@ namespace MmdViewerTestCS
 {
     public partial class Form1 : Form
     {
-        [System.Runtime.InteropServices.DllImport("User32.dll")]
-        private extern static bool PrintWindow(IntPtr hwnd, IntPtr hDC, uint nFlags);
+        string settingFilename = "setting.ini";
+        string pmdInitialDirectory = "";
+        string vmdInitialDirectory = "";
+        string pmdHeader = "PMD:";
+        string vmdHeader = "VMD:";
+
         private ControlVariableCLRWrapper controlVariableCLRWrapper;
         private float[] rotation;
 
@@ -28,6 +32,30 @@ namespace MmdViewerTestCS
             }
             rotation = new float[9] { 1, 0, 0, 0, 0, 1, 0, 1, 0 };
             _tcp = new TCPSender(rotation);
+            if (File.Exists(settingFilename))
+            {
+                using (var sr = new StreamReader(settingFilename))
+                {
+                    for (int i = 0; i < 2; ++i)
+                    {
+                        var s = sr.ReadLine();
+                        if (s == null) break;
+                        if (s.StartsWith(pmdHeader)) pmdInitialDirectory = s.Substring(pmdHeader.Length);
+                        else if (s.StartsWith(vmdHeader)) vmdInitialDirectory = s.Substring(vmdHeader.Length);
+                    }
+                }
+            }
+        }
+
+        // フォームを閉じるときのイベント
+        // 設定を保存
+        private void Form1_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            using (var sw = new StreamWriter(settingFilename))
+            {
+                sw.WriteLine(pmdHeader + pmdInitialDirectory);
+                sw.WriteLine(vmdHeader + vmdInitialDirectory);
+            }
         }
 
         // フォーム開始イベント
@@ -39,26 +67,34 @@ namespace MmdViewerTestCS
         }
 
         // メニューOpenボタンクリックイベント
-        // ファイルを開く
+        // PMDファイルを開く
         private void openOToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "pmdファイル(*.pmd)|*.pmd|vmdファイル(*.vmd)|*.vmd";
-            openFileDialog.RestoreDirectory = true; // これをtrueにしないと、カレントディレクトリがファイルを開いたディレクトリに変更されてしまう！
+            openFileDialog.Filter = "pmdファイル(*.pmd)|*.pmd";
+            if(pmdInitialDirectory != "") openFileDialog.InitialDirectory = pmdInitialDirectory;
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
-                String extension = System.IO.Path.GetExtension(openFileDialog.FileName);
-                if (extension == ".pmd")
-                {
-                    controlVariableCLRWrapper.pmdFileName = openFileDialog.FileName;
-                    controlVariableCLRWrapper.openPmdFileFlag = true;
-                }
-                else if (extension == ".vmd")
-                {
-                    controlVariableCLRWrapper.vmdFileName = openFileDialog.FileName;
-                    controlVariableCLRWrapper.openVmdFileFlag = true;
-                }
+                controlVariableCLRWrapper.pmdFileName = openFileDialog.FileName;
+                controlVariableCLRWrapper.openPmdFileFlag = true;
+                pmdInitialDirectory = Path.GetDirectoryName(openFileDialog.FileName);
             }
+        }
+
+        // メニューOpenボタンクリックイベント
+        // VMDファイルを開く
+        private void openVMDToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "vmdファイル(*.vmd)|*.vmd";
+            if (vmdInitialDirectory != "") openFileDialog.InitialDirectory = vmdInitialDirectory;
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                controlVariableCLRWrapper.vmdFileName = openFileDialog.FileName;
+                controlVariableCLRWrapper.openVmdFileFlag = true;
+                vmdInitialDirectory = Path.GetDirectoryName(openFileDialog.FileName);
+            }
+
         }
 
         // タイマイベント
