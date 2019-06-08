@@ -6,7 +6,7 @@ struct ControlVariable {
 	ControlVariable() {
 		openPmdFileFlag = false;
 		openVmdFileFlag = false;
-		physicsEnabled = true;
+		physicsEnabled = false;
 		boneMeshEnabled = false;
 		rigidMeshEnabled = false;
 		jointMeshEnabled = false;

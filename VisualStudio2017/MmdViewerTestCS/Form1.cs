@@ -31,7 +31,7 @@ namespace MmdViewerTestCS
                     break;
                 }
             }
-            rotation = new float[9] { 1, 0, 0, 0, 0, 1, 0, 1, 0 };
+            rotation = new float[9] { 1, 0, 0, 0, 0, 1, 0, -1, 0 };
             _tcp = new TCPSender(rotation);
             if (File.Exists(settingFilename))
             {
@@ -91,6 +91,7 @@ namespace MmdViewerTestCS
                 controlVariableCLRWrapper.openPmdFileFlag = true;
                 pmdInitialDirectory = Path.GetDirectoryName(openFileDialog.FileName);
             }
+            controlVariableCLRWrapper.physicsEnabled = physicsEnabledToolStripMenuItem.Checked = false;
         }
 
         // メニューOpenボタンクリックイベント
